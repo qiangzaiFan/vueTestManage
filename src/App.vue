@@ -26,12 +26,40 @@
         </div>
       </el-footer>
     </el-container>
+
+    <!-- 全局HTTP请求弹窗 -->
+    <request-dialog :visible.sync="requestDialogVisible" />
   </div>
 </template>
 
 <script>
+import RequestDialog from './components/RequestDialog.vue'
 export default {
-  name: 'App'
+  name: 'App',
+  components: { RequestDialog },
+  data() {
+    return {
+      requestDialogVisible: false
+    }
+  },
+  mounted() {
+    const self = this
+    // 在 window 上暴露可控的显示/隐藏属性与方法
+    try {
+      Object.defineProperty(window, 'requestDialogVisible', {
+        configurable: true,
+        get() { return self.requestDialogVisible },
+        set(v) { self.requestDialogVisible = !!v }
+      })
+    } catch (e) {
+      // 回退：直接赋值不可观察，但仍可通过方法控制
+      window.requestDialogVisible = self.requestDialogVisible
+    }
+
+    window.showRequestDialog = function() { self.requestDialogVisible = true }
+    window.hideRequestDialog = function() { self.requestDialogVisible = false }
+    window.toggleRequestDialog = function() { self.requestDialogVisible = !self.requestDialogVisible }
+  }
 }
 </script>
 
