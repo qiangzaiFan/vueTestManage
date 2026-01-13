@@ -44,14 +44,35 @@
         </div>
       </div>
     </el-card>
+
+    <el-card style="margin-top: 20px;">
+      <section-title title="装备配置情况">
+        <div style="display: flex; align-items: center;">
+          <span style="margin-right: 12px; font-size: 14px; color: #606266;">参照的班组类型</span>
+          <el-select v-model="teamType" placeholder="请选择" size="small" style="width: 200px;">
+            <el-option label="输电运检班" value="输电运检班"></el-option>
+            <el-option label="变电检修班" value="变电检修班"></el-option>
+          </el-select>
+        </div>
+      </section-title>
+      <div style="padding: 20px; color: #909399; font-size: 14px;">
+        (此处为下方内容区域占位)
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script>
+import SectionTitle from '@/components/SectionTitle.vue'
+
 export default {
   name: 'About',
+  components: {
+    SectionTitle
+  },
   data() {
     return {
+      teamType: '输电运检班',
       currentDate: new Date().toLocaleDateString('zh-CN'),
       projectStructure: [
         {
