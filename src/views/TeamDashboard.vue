@@ -237,7 +237,7 @@ export default {
            }
          ],
          grid: {
-           top: 40, // Adjust top margin to accommodate 2 rows of legend and titles
+          top: 80, // Adjust top margin to accommodate 2 rows of legend and titles
           left: '3%',
           right: '4%',
           bottom: '3%',

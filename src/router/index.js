@@ -29,6 +29,21 @@ const routes = [
     path: '/personal-config',
     name: 'PersonalConfig',
     component: () => import('../views/PersonalConfig.vue')
+  },
+  {
+    path: '/select-demo',
+    name: 'SelectInputDemo',
+    component: () => import('../views/SelectInputDemo.vue')
+  },
+  {
+    path: '/team-dashboard',
+    name: 'TeamDashboard',
+    component: () => import('../views/TeamDashboard.vue')
+  },
+  {
+    path: '/personal-portrait',
+    name: 'PersonalPortrait',
+    component: () => import('../views/PersonalPortrait.vue')
   }
 ]
 
