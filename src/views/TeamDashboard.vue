@@ -132,16 +132,18 @@ export default {
       const option = {
         legend: {
           data: ['输电线路跳闸率'],
-          top: 0,
-          right: 0,
+          top: 10,
+          left: 'center',
           icon: 'circle',
           itemWidth: 8,
-          itemHeight: 8
+          itemHeight: 8,
+          textStyle: { fontSize: 12, color: '#606266' }
         },
         grid: {
           left: '3%',
           right: '4%',
           bottom: '3%',
+          top: '15%',
           containLabel: true
         },
         tooltip: {
@@ -212,32 +214,23 @@ export default {
              }
            }
          ],
-         legend: [
-           {
-             data: ['关键业务自主实施能力覆盖率 I类', '关键业务自主实施能力覆盖率 II类'],
-             top: 0,
-             left: 200,
-             itemWidth: 25,
-             itemHeight: 14,
-             textStyle: { fontSize: 12, color: '#606266' },
-             formatter: function (name) {
-               return name.includes('I类') ? 'I 类' : 'II 类'
-             }
-           },
-           {
-             data: ['年度关键业务自主实施类型覆盖率 I类', '年度关键业务自主实施类型覆盖率 II类'],
-             top: 0,
-             left: 580,
-             itemWidth: 25,
-             itemHeight: 14,
-             textStyle: { fontSize: 12, color: '#606266' },
-             formatter: function (name) {
-               return name.includes('I类') ? 'I 类' : 'II 类'
-             }
-           }
-         ],
+         legend: {
+            data: ['关键业务自主实施能力覆盖率 I类', '关键业务自主实施能力覆盖率 II类', '年度关键业务自主实施类型覆盖率 I类', '年度关键业务自主实施类型覆盖率 II类'],
+            top: 10,
+            left: 'center',
+            itemWidth: 14,
+            itemHeight: 14,
+            textStyle: { fontSize: 12, color: '#606266' },
+            formatter: function (name) {
+              if (name.includes('能力覆盖率')) {
+                return name.includes('I类') ? '能力覆盖率 I类' : '能力覆盖率 II类'
+              } else {
+                return name.includes('I类') ? '类型覆盖率 I类' : '类型覆盖率 II类'
+              }
+            }
+          },
          grid: {
-          top: 80, // Adjust top margin to accommodate 2 rows of legend and titles
+          top: '15%', // Adjust top margin to accommodate legend
           left: '3%',
           right: '4%',
           bottom: '3%',
@@ -347,6 +340,20 @@ export default {
 .chart-container {
   height: 300px;
   width: 100%;
+}
+
+/* 修复ECharts图例显示问题 */
+::v-deep .echarts-legend {
+  padding: 5px 0;
+}
+
+::v-deep .echarts-legend-item {
+  margin-right: 15px;
+}
+
+::v-deep .echarts-legend-text {
+  font-size: 12px;
+  color: #606266;
 }
 
 .legend-dot {
