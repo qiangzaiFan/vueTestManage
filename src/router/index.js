@@ -49,6 +49,16 @@ const routes = [
     path: '/team-report',
     name: 'TeamReport',
     component: () => import('../views/TeamReport.vue')
+  },
+  {
+    path: '/business-category',
+    name: 'BusinessCategoryDemo',
+    component: () => import('../views/BusinessCategoryDemo.vue')
+  },
+  {
+    path: '/tree-usage',
+    name: 'TreeUsageDemo',
+    component: () => import('../views/TreeUsageDemo.vue')
   }
 ]
 
