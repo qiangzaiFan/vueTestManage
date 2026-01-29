@@ -59,6 +59,11 @@ const routes = [
     path: '/tree-usage',
     name: 'TreeUsageDemo',
     component: () => import('../views/TreeUsageDemo.vue')
+  },
+  {
+    path: '/score-form',
+    name: 'ScoreForm',
+    component: () => import('../views/ScoreForm.vue')
   }
 ]
 
