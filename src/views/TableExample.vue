@@ -127,7 +127,6 @@ export default {
           email: 'lisi@example.com',
           role: '用户',
           status: true,
-          createTime: '2023-01-02 11:00:00'
         },
         {
           id: 3,

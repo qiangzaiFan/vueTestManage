@@ -52,10 +52,69 @@
         </el-col>
         <el-col :span="12">
           <el-card shadow="hover">
-            <div slot="header" class="chart-header">
-              <span class="chart-title">两率年度统计</span>
-              <div class="chart-legend">
-                <!-- Legend handled by echarts, or custom if needed to match design exactly. ECharts legend is usually fine. -->
+            <div slot="header" class="chart-header custom-header">
+              <div class="legend-container">
+                <!-- 达标率 -->
+                <div class="legend-group">
+                  <div class="legend-content" @click="toggleSeries('达标率')">
+                    <span class="legend-icon solid-blue"></span>
+                    <span class="legend-text">达标率</span>
+                  </div>
+                  <div class="sort-wrapper">
+                    <i class="el-icon-caret-top sort-btn" :class="{active: sortField === 'complianceRate' && sortOrder === 'asc'}" @click.stop="handleSort('complianceRate', 'asc')"></i>
+                    <i class="el-icon-caret-bottom sort-btn" :class="{active: sortField === 'complianceRate' && sortOrder === 'desc'}" @click.stop="handleSort('complianceRate', 'desc')"></i>
+                  </div>
+                </div>
+
+                <!-- 关键业务自主实施能力覆盖率 -->
+                <div class="legend-group">
+                   <span class="legend-title">关键业务自主实施能力覆盖率：</span>
+                   <div class="legend-sub-group">
+                      <div class="legend-content" @click="toggleSeries('关键业务自主实施能力覆盖率 I类')">
+                        <span class="legend-icon hollow-purple"></span>
+                        <span class="legend-text">I 类</span>
+                      </div>
+                      <div class="sort-wrapper">
+                        <i class="el-icon-caret-top sort-btn" :class="{active: sortField === 'capabilityCoverage1' && sortOrder === 'asc'}" @click.stop="handleSort('capabilityCoverage1', 'asc')"></i>
+                        <i class="el-icon-caret-bottom sort-btn" :class="{active: sortField === 'capabilityCoverage1' && sortOrder === 'desc'}" @click.stop="handleSort('capabilityCoverage1', 'desc')"></i>
+                      </div>
+                   </div>
+                   <div class="legend-sub-group">
+                      <div class="legend-content" @click="toggleSeries('关键业务自主实施能力覆盖率 II类')">
+                        <span class="legend-icon hollow-teal"></span>
+                        <span class="legend-text">II 类</span>
+                      </div>
+                      <div class="sort-wrapper">
+                        <i class="el-icon-caret-top sort-btn" :class="{active: sortField === 'capabilityCoverage2' && sortOrder === 'asc'}" @click.stop="handleSort('capabilityCoverage2', 'asc')"></i>
+                        <i class="el-icon-caret-bottom sort-btn" :class="{active: sortField === 'capabilityCoverage2' && sortOrder === 'desc'}" @click.stop="handleSort('capabilityCoverage2', 'desc')"></i>
+                      </div>
+                   </div>
+                </div>
+
+                <!-- 年度关键业务自主实施类型覆盖率 -->
+                <div class="legend-group">
+                   <span class="legend-title">年度关键业务自主实施类型覆盖率：</span>
+                   <div class="legend-sub-group">
+                      <div class="legend-content" @click="toggleSeries('年度关键业务自主实施类型覆盖率 I类')">
+                        <span class="legend-icon hollow-orange"></span>
+                        <span class="legend-text">I 类</span>
+                      </div>
+                      <div class="sort-wrapper">
+                        <i class="el-icon-caret-top sort-btn" :class="{active: sortField === 'typeCoverage1' && sortOrder === 'asc'}" @click.stop="handleSort('typeCoverage1', 'asc')"></i>
+                        <i class="el-icon-caret-bottom sort-btn" :class="{active: sortField === 'typeCoverage1' && sortOrder === 'desc'}" @click.stop="handleSort('typeCoverage1', 'desc')"></i>
+                      </div>
+                   </div>
+                   <div class="legend-sub-group">
+                      <div class="legend-content" @click="toggleSeries('年度关键业务自主实施类型覆盖率 II类')">
+                        <span class="legend-icon hollow-pink"></span>
+                        <span class="legend-text">II 类</span>
+                      </div>
+                      <div class="sort-wrapper">
+                        <i class="el-icon-caret-top sort-btn" :class="{active: sortField === 'typeCoverage2' && sortOrder === 'asc'}" @click.stop="handleSort('typeCoverage2', 'asc')"></i>
+                        <i class="el-icon-caret-bottom sort-btn" :class="{active: sortField === 'typeCoverage2' && sortOrder === 'desc'}" @click.stop="handleSort('typeCoverage2', 'desc')"></i>
+                      </div>
+                   </div>
+                </div>
               </div>
             </div>
             <div id="annualStatsChart" class="chart-container"></div>
@@ -98,7 +157,19 @@ export default {
         { label: '正高', value: 12, percentage: 6, color: '#E6A23C' }
       ],
       tripRateChart: null,
-      annualStatsChart: null
+      annualStatsChart: null,
+      sortField: '',
+      sortOrder: '',
+      annualStatsData: [
+        { name: '拉萨', complianceRate: 96.2, capabilityCoverage1: 88.0, capabilityCoverage2: 85.5, typeCoverage1: 92.0, typeCoverage2: 78.5 },
+        { name: '日喀则', complianceRate: 95.5, capabilityCoverage1: 92.0, capabilityCoverage2: 87.0, typeCoverage1: 92.0, typeCoverage2: 78.5 },
+        { name: '山南', complianceRate: 94.2, capabilityCoverage1: 93.0, capabilityCoverage2: 88.0, typeCoverage1: 92.0, typeCoverage2: 79.5 },
+        { name: '林芝', complianceRate: 93.5, capabilityCoverage1: 94.0, capabilityCoverage2: 86.5, typeCoverage1: 92.0, typeCoverage2: 79.5 },
+        { name: '那曲', complianceRate: 92.5, capabilityCoverage1: 88.0, capabilityCoverage2: 85.8, typeCoverage1: 91.8, typeCoverage2: 78.5 },
+        { name: '昌都', complianceRate: 91.0, capabilityCoverage1: 89.0, capabilityCoverage2: 86.5, typeCoverage1: 92.0, typeCoverage2: 78.5 },
+        { name: '阿里', complianceRate: 89.8, capabilityCoverage1: 83.5, capabilityCoverage2: 87.5, typeCoverage1: 92.0, typeCoverage2: 79.5 },
+        { name: '超高压', complianceRate: 81.0, capabilityCoverage1: 81.0, capabilityCoverage2: 88.8, typeCoverage1: 92.0, typeCoverage2: 79.5 }
+      ]
     }
   },
   mounted() {
@@ -190,47 +261,39 @@ export default {
     initAnnualStatsChart() {
       const chartDom = document.getElementById('annualStatsChart')
       this.annualStatsChart = window.echarts.init(chartDom)
-      
+      this.updateAnnualStatsChart()
+    },
+    updateAnnualStatsChart() {
+      if (!this.annualStatsChart) return
+
+      // Sort data
+      let data = [...this.annualStatsData]
+      if (this.sortField && this.sortOrder) {
+        data.sort((a, b) => {
+          if (this.sortOrder === 'asc') {
+            return a[this.sortField] - b[this.sortField]
+          } else {
+            return b[this.sortField] - a[this.sortField]
+          }
+        })
+      }
+
+      const xAxisData = data.map(item => item.name)
+      const seriesData = {
+        complianceRate: data.map(item => item.complianceRate),
+        capabilityCoverage1: data.map(item => item.capabilityCoverage1),
+        capabilityCoverage2: data.map(item => item.capabilityCoverage2),
+        typeCoverage1: data.map(item => item.typeCoverage1),
+        typeCoverage2: data.map(item => item.typeCoverage2)
+      }
+
       const option = {
-        title: [
-          {
-             text: '关键业务自主实施能力覆盖率：',
-             left: 0,
-             top: 0,
-             textStyle: {
-               fontSize: 12,
-               fontWeight: 'normal',
-               color: '#606266'
-             }
-           },
-           {
-             text: '年度关键业务自主实施类型覆盖率：',
-             left: 360,
-             top: 0,
-             textStyle: {
-               fontSize: 12,
-               fontWeight: 'normal',
-               color: '#606266'
-             }
-           }
-         ],
-         legend: {
-            data: ['关键业务自主实施能力覆盖率 I类', '关键业务自主实施能力覆盖率 II类', '年度关键业务自主实施类型覆盖率 I类', '年度关键业务自主实施类型覆盖率 II类'],
-            top: 10,
-            left: 'center',
-            itemWidth: 14,
-            itemHeight: 14,
-            textStyle: { fontSize: 12, color: '#606266' },
-            formatter: function (name) {
-              if (name.includes('能力覆盖率')) {
-                return name.includes('I类') ? '能力覆盖率 I类' : '能力覆盖率 II类'
-              } else {
-                return name.includes('I类') ? '类型覆盖率 I类' : '类型覆盖率 II类'
-              }
-            }
-          },
-         grid: {
-          top: '15%', // Adjust top margin to accommodate legend
+        legend: {
+          show: false, // Hide default legend
+          data: ['达标率', '关键业务自主实施能力覆盖率 I类', '关键业务自主实施能力覆盖率 II类', '年度关键业务自主实施类型覆盖率 I类', '年度关键业务自主实施类型覆盖率 II类']
+        },
+        grid: {
+          top: '10%',
           left: '3%',
           right: '4%',
           bottom: '3%',
@@ -242,58 +305,91 @@ export default {
         xAxis: {
           type: 'category',
           boundaryGap: false,
-          data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'],
+          data: xAxisData,
           axisLine: { lineStyle: { color: '#ddd' } },
           axisLabel: { color: '#666' }
         },
         yAxis: {
           type: 'value',
           name: '单位：%',
-          min: 70,
-          max: 95,
+          min: 75,
+          max: 100,
           splitLine: { lineStyle: { type: 'dashed' } }
         },
         series: [
           {
+            name: '达标率',
+            type: 'line',
+            smooth: false,
+            symbol: 'circle', // Solid dot
+            symbolSize: 8,
+            itemStyle: { color: '#409EFF' },
+            lineStyle: { width: 2 },
+            data: seriesData.complianceRate
+          },
+          {
             name: '关键业务自主实施能力覆盖率 I类',
             type: 'line',
             smooth: false,
-            symbol: 'emptyCircle',
-            symbolSize: 6,
-            itemStyle: { color: '#409EFF' },
-            data: [78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89]
+            symbol: 'emptyCircle', // Hollow
+            symbolSize: 8,
+            itemStyle: { color: '#8A2BE2' }, // Purple
+            lineStyle: { width: 2 },
+            data: seriesData.capabilityCoverage1
           },
           {
             name: '关键业务自主实施能力覆盖率 II类',
             type: 'line',
             smooth: false,
             symbol: 'emptyCircle',
-            symbolSize: 6,
-            itemStyle: { color: '#13ce66' },
-            data: [90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90, 90]
+            symbolSize: 8,
+            itemStyle: { color: '#13ce66' }, // Teal/Green
+            lineStyle: { width: 2 },
+            data: seriesData.capabilityCoverage2
           },
           {
             name: '年度关键业务自主实施类型覆盖率 I类',
             type: 'line',
             smooth: false,
             symbol: 'emptyCircle',
-            symbolSize: 6,
-            itemStyle: { color: '#E6A23C' },
-            data: [76, 77, 77.5, 77.8, 78, 78.5, 78.8, 79, 79.2, 79.5, 79.8, 80]
+            symbolSize: 8,
+            itemStyle: { color: '#E6A23C' }, // Orange
+            lineStyle: { width: 2 },
+            data: seriesData.typeCoverage1
           },
           {
             name: '年度关键业务自主实施类型覆盖率 II类',
             type: 'line',
             smooth: false,
             symbol: 'emptyCircle',
-            symbolSize: 6,
-            itemStyle: { color: '#F56C6C' },
-            data: [79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
+            symbolSize: 8,
+            itemStyle: { color: '#F56C6C' }, // Pink/Red
+            lineStyle: { width: 2 },
+            data: seriesData.typeCoverage2
           }
         ]
       }
       
       this.annualStatsChart.setOption(option)
+    },
+    handleSort(field, order) {
+      if (this.sortField === field && this.sortOrder === order) {
+        // Toggle off if clicking same
+        this.sortOrder = ''
+        this.sortField = ''
+      } else {
+        this.sortField = field
+        this.sortOrder = order
+      }
+      this.updateAnnualStatsChart()
+    },
+    toggleSeries(name) {
+      if (this.annualStatsChart) {
+        this.annualStatsChart.dispatchAction({
+          type: 'legendToggleSelect',
+          name: name
+        })
+      }
     }
   }
 }
@@ -342,34 +438,74 @@ export default {
   width: 100%;
 }
 
-/* 修复ECharts图例显示问题 */
-::v-deep .echarts-legend {
+/* Custom Legend Styles */
+.custom-header {
   padding: 5px 0;
 }
-
-::v-deep .echarts-legend-item {
-  margin-right: 15px;
-}
-
-::v-deep .echarts-legend-text {
+.legend-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   font-size: 12px;
   color: #606266;
 }
-
-.legend-dot {
+.legend-group {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+.legend-sub-group {
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+}
+.legend-title {
+  font-weight: normal;
+  margin-right: 5px;
+}
+.legend-content {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+.legend-text {
+  margin-right: 2px;
+}
+.legend-icon {
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   margin-right: 5px;
 }
+/* Icon styles */
+.solid-blue { background-color: #409EFF; }
+.hollow-purple { border: 2px solid #8A2BE2; background-color: #fff; width: 6px; height: 6px; }
+.hollow-teal { border: 2px solid #13ce66; background-color: #fff; width: 6px; height: 6px; }
+.hollow-orange { border: 2px solid #E6A23C; background-color: #fff; width: 6px; height: 6px; }
+.hollow-pink { border: 2px solid #F56C6C; background-color: #fff; width: 6px; height: 6px; }
 
-.legend-dot.blue {
-  background-color: #409EFF;
+/* Sort controls */
+.sort-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-left: 4px;
+  height: 16px;
 }
-
-.legend-item {
+.sort-btn {
   font-size: 12px;
+  line-height: 6px; /* Tighter spacing */
+  height: 6px;
+  color: #C0C4CC;
+  cursor: pointer;
+  transform: scale(0.9);
+}
+.sort-btn.active {
+  color: #409EFF;
+}
+.sort-btn:hover {
   color: #606266;
 }
 </style>

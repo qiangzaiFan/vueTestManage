@@ -39,11 +39,13 @@
             <el-table-column prop="grade" label="绩效等级" align="center"></el-table-column>
             <el-table-column prop="score" label="绩效积分" align="center"></el-table-column>
             <el-table-column prop="last3YearsScore" label="近三年绩效积分" align="center"></el-table-column>
-            <el-table-column label="操作" width="150" align="center">
+            <el-table-column label="操作" min-width="150" align="center">
               <template slot-scope="scope">
-                <el-button type="text" size="small" icon="el-icon-edit-outline" @click="handleEditPerformance('annual', scope.row)">编辑</el-button>
-                <el-divider direction="vertical"></el-divider>
-                <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeletePerformance('annual', scope.$index)">删除</el-button>
+                <div class="operation-wrapper">
+                  <el-button type="text" size="small" icon="el-icon-edit-outline" @click="handleEditPerformance('annual', scope.row)">编辑</el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeletePerformance('annual', scope.$index)">删除</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -64,11 +66,13 @@
             <el-table-column prop="id" label="序号" width="50" align="center"></el-table-column>
             <el-table-column prop="year" label="成果时间" width="100" align="center"></el-table-column>
             <el-table-column prop="description" label="创新成果描述" align="center"></el-table-column>
-            <el-table-column label="操作" width="150" align="center">
+            <el-table-column label="操作" min-width="150" align="center">
               <template slot-scope="scope">
-                <el-button type="text" size="small" icon="el-icon-edit-outline" @click="handleEditPerformance('innovation', scope.row)">编辑</el-button>
-                <el-divider direction="vertical"></el-divider>
-                <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeletePerformance('innovation', scope.$index)">删除</el-button>
+                <div class="operation-wrapper">
+                  <el-button type="text" size="small" icon="el-icon-edit-outline" @click="handleEditPerformance('innovation', scope.row)">编辑</el-button>
+                  <el-divider direction="vertical"></el-divider>
+                  <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeletePerformance('innovation', scope.$index)">删除</el-button>
+                </div>
               </template>
             </el-table-column>
           </el-table>
@@ -87,11 +91,13 @@
             :header-cell-style="{background: '#f5f7fa', color: '#606266', fontWeight: 'bold'}"
           >
             <el-table-column prop="id" label="序号" width="50" align="center"></el-table-column>
-            <el-table-column prop="year" label="获奖时间" width="100" align="center"></el-table-column>
+            <el-table-column prop="year"min- label="获奖时间" width="100" align="center"></el-table-column>
             <el-table-column prop="description" label="获奖表彰描述" align="center"></el-table-column>
-            <el-table-column label="操作" width="150" align="center">
-              <template slot-scope="scope">
-                <el-button type="text" size="small" icon="el-icon-edit-outline" @click="handleEditPerformance('awards', scope.row)">编辑</el-button>
+            <el-tdiv class="oparation-wrapper">
+                  <eble-column label="操作" width="150" align="center">
+              <t  emplate slot-scope="scope">
+                  <el-button type="text" size="small" icon="el-icon-edit-outline" @click="handleEditPerformance('awards', scope.row)">编辑</el-butto>
+                </divn>
                 <el-divider direction="vertical"></el-divider>
                 <el-button type="text" size="small" icon="el-icon-delete" @click="handleDeletePerformance('awards', scope.$index)">删除</el-button>
               </template>
@@ -106,9 +112,10 @@
       :title="performanceDrawerTitle"
       :visible.sync="performanceDrawerVisible"
       direction="rtl"
-      size="30%">
+      size="30%"
+      destroy-on-close>
       <div class="drawer-content">
-        <el-form :model="performanceForm" ref="performanceForm" label-width="120px" size="small">
+        <el-form :model="performanceForm" ref="performanceForm" label-width="120px" size="small" :validate-on-rule-change="false">
           <!-- Annual Performance Fields -->
           <template v-if="currentPerformanceType === 'annual'">
             <el-form-item label="考核日期" prop="year" :rules="{ required: true, message: '请选择年份', trigger: 'change' }">
@@ -308,6 +315,13 @@ export default {
 }
 
 .drawer-footer {
+
+.operation-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
   margin-top: auto;
   text-align: right;
   padding-top: 20px;
