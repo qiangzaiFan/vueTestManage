@@ -5,21 +5,45 @@
     </div>
 
     <div class="category-tree">
-      <!-- 递归树节点 -->
-      <tree-node
-        v-for="(node, index) in list"
-        :key="node.id"
-        :node="node"
-        :siblings="list"
-        :index="index"
-        :level="1"
+      <el-tree
+        ref="tree"
+        :data="treeData"
+        :props="defaultProps"
+        node-key="id"
+        default-expand-all
+        :expand-on-click-node="false"
         @node-click="handleNodeClick"
-        @add-item="handleAddItem"
-        @edit-item="handleEditItem"
-        @delete-item="handleDeleteItem"
-        @move-up="handleMoveUp"
-        @move-down="handleMoveDown"
-      />
+        :highlight-current="true"
+        class="custom-tree"
+      >
+        <div class="custom-tree-node" slot-scope="{ node, data }" :class="'level-' + node.level">
+          <div class="node-content-wrapper">
+            <span class="node-label">{{ node.label }}</span>
+          </div>
+          <div class="node-actions" @click.stop>
+            <el-popover
+              placement="bottom"
+              width="100"
+              trigger="click"
+              popper-class="action-popover"
+              v-model="data.popoverVisible">
+              <div class="action-menu">
+                <div class="menu-item" @click="handleAddItem(data)" v-if="node.level < 3">添加子项</div>
+                <div class="menu-item" @click="handleEditItem(data)">编辑</div>
+                <div class="menu-item" @click="handleDeleteItem(node, data)">删除</div>
+                <div class="menu-item" @click="handleMoveUp(node, data)">上移</div>
+                <div class="menu-item" @click="handleMoveDown(node, data)">下移</div>
+              </div>
+              <el-button 
+                slot="reference" 
+                type="text" 
+                :icon="node.level === 1 ? 'el-icon-circle-plus-outline' : 'el-icon-s-operation'" 
+                class="action-btn"
+              ></el-button>
+            </el-popover>
+          </div>
+        </div>
+      </el-tree>
       
       <!-- 添加一级类别按钮 -->
       <div class="add-root-btn-container">
@@ -51,214 +75,132 @@
 import SectionTitle from './SectionTitle.vue'
 import { defaultTreeData } from '@/utils/treeData.js'
 
-// 递归树节点组件
-const TreeNode = {
-  name: 'TreeNode',
-  props: {
-    node: { type: Object, required: true },
-    siblings: { type: Array, required: true },
-    index: { type: Number, required: true },
-    level: { type: Number, required: true }
-  },
-  methods: {
-    toggleExpand() {
-      this.$set(this.node, 'expanded', !this.node.expanded)
-    },
-    handleNodeClick() {
-      this.$emit('node-click', this.node)
-    },
-    handleAddItem() {
-      this.$emit('add-item', this.node)
-    },
-    handleEditItem() {
-      this.$emit('edit-item', this.node, this.index, this.siblings)
-    },
-    handleDeleteItem() {
-      this.$emit('delete-item', this.node, this.index, this.siblings)
-    },
-    handleMoveUp() {
-      this.$emit('move-up', this.index, this.siblings)
-    },
-    handleMoveDown() {
-      this.$emit('move-down', this.index, this.siblings)
-    }
-  },
-  template: `
-    <div class="tree-node">
-      <!-- 当前节点 -->
-      <div 
-        class="node-content"
-        :class="['level-' + level, { 'is-active': $parent.activeId === node.id }]"
-        @click="handleNodeClick"
-        @mouseenter="$parent.hoverId = node.id"
-        @mouseleave="$parent.hoverId = null"
-      >
-        <div class="node-left" @click.stop="toggleExpand" v-if="node.children && node.children.length > 0">
-          <i 
-            :class="node.expanded ? 'el-icon-arrow-up' : 'el-icon-arrow-down'" 
-            class="expand-icon"
-          ></i>
-          <span class="node-label">{{ node.name }}</span>
-        </div>
-        <div class="node-left" v-else>
-          <span class="node-label">{{ node.name }}</span>
-        </div>
-        <div class="node-right">
-          <el-popover
-            placement="bottom"
-            width="100"
-            trigger="click"
-            popper-class="action-popover"
-            v-model="node.popoverVisible">
-            <div class="action-menu">
-              <div class="menu-item" @click="handleAddItem" v-if="level < 3">添加子项</div>
-              <div class="menu-item" @click="handleEditItem">编辑</div>
-              <div class="menu-item" @click="handleDeleteItem">删除</div>
-              <div class="menu-item" @click="handleMoveUp">上移</div>
-              <div class="menu-item" @click="handleMoveDown">下移</div>
-            </div>
-            <el-button 
-              slot="reference" 
-              type="text" 
-              :icon="level === 1 ? 'el-icon-circle-plus-outline' : 'el-icon-s-operation'" 
-              class="action-btn"
-              @click.stop
-            ></el-button>
-          </el-popover>
-        </div>
-      </div>
-
-      <!-- 子节点 -->
-      <div v-show="node.expanded" class="children-container" v-if="node.children && node.children.length > 0">
-        <tree-node
-          v-for="(child, childIndex) in node.children"
-          :key="child.id"
-          :node="child"
-          :siblings="node.children"
-          :index="childIndex"
-          :level="level + 1"
-          @node-click="$emit('node-click', $event)"
-          @add-item="$emit('add-item', $event)"
-          @edit-item="$emit('edit-item', $event)"
-          @delete-item="$emit('delete-item', $event)"
-          @move-up="$emit('move-up', $event)"
-          @move-down="$emit('move-down', $event)"
-        />
-      </div>
-    </div>
-  `
-}
-
 export default {
   name: 'BusinessCategory',
   components: {
-    SectionTitle,
-    TreeNode
+    SectionTitle
   },
   data() {
     return {
-      list: defaultTreeData,
-      hoverId: null,
+      treeData: defaultTreeData,
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
       activeId: null,
       dialogVisible: false,
       dialogTitle: '',
       currentForm: {
         name: ''
       },
-      editingNode: null,
-      parentList: null,
-      editingIndex: -1,
+      editingNodeData: null,
       isEditMode: false,
-      parentCategory: null
+      parentCategoryData: null
     }
   },
   methods: {
-    toggleExpand(category) {
-      category.expanded = !category.expanded
-    },
-    handleNodeClick(node) {
-      this.activeId = node.id
+    handleNodeClick(data) {
+      this.activeId = data.id
+      this.$emit('node-click', data)
     },
     addRootCategory() {
       this.isEditMode = false
-      this.parentCategory = null
+      this.parentCategoryData = null
       this.currentForm.name = ''
       this.dialogTitle = '添加一级类别'
       this.dialogVisible = true
     },
-    handleAddItem(node) {
-      node.popoverVisible = false
+    handleAddItem(data) {
+      data.popoverVisible = false
       this.isEditMode = false
-      this.parentCategory = node
+      this.parentCategoryData = data
       this.currentForm.name = ''
       this.dialogTitle = '添加子项'
       this.dialogVisible = true
     },
-    handleEditItem(node, index, list) {
-      node.popoverVisible = false
+    handleEditItem(data) {
+      data.popoverVisible = false
       this.isEditMode = true
-      this.editingNode = node
-      this.currentForm.name = node.name
+      this.editingNodeData = data
+      this.currentForm.name = data.name
       this.dialogTitle = '编辑'
       this.dialogVisible = true
     },
-    handleDeleteItem(node, index, list) {
-      node.popoverVisible = false
+    handleDeleteItem(node, data) {
+      data.popoverVisible = false
       this.$confirm('确认删除该项吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        list.splice(index, 1)
+        const parent = node.parent;
+        const children = parent.level === 0 ? this.treeData : parent.data.children;
+        const index = children.findIndex(d => d.id === data.id);
+        children.splice(index, 1);
       }).catch(() => {})
     },
-    handleMoveUp(index, list) {
-      if (list[index]) list[index].popoverVisible = false
+    handleMoveUp(node, data) {
+      data.popoverVisible = false
+      const parent = node.parent;
+      const children = parent.level === 0 ? this.treeData : parent.data.children;
+      const index = children.findIndex(d => d.id === data.id);
       
       if (index > 0) {
-        const item = list[index]
-        list.splice(index, 1)
-        list.splice(index - 1, 0, item)
+        const item = children[index]
+        const prevItem = children[index - 1]
+        children.splice(index - 1, 2, item, prevItem)
       } else {
         this.$message.warning('已经是第一项了')
       }
     },
-    handleMoveDown(index, list) {
-      if (list[index]) list[index].popoverVisible = false
+    handleMoveDown(node, data) {
+      data.popoverVisible = false
+      const parent = node.parent;
+      const children = parent.level === 0 ? this.treeData : parent.data.children;
+      const index = children.findIndex(d => d.id === data.id);
 
-      if (index < list.length - 1) {
-        const item = list[index]
-        list.splice(index, 1)
-        list.splice(index + 1, 0, item)
+      if (index < children.length - 1) {
+        const item = children[index]
+        const nextItem = children[index + 1]
+        children.splice(index, 2, nextItem, item)
       } else {
         this.$message.warning('已经是最后一项了')
       }
     },
     saveItem() {
       if (!this.currentForm.name.trim()) {
-        this.$message.warning('`请输入名称')
+        this.$message.warning('请输入名称')
         return
       }
 
       if (this.isEditMode) {
-        this.editingNode.name = this.currentForm.name
+        this.editingNodeData.name = this.currentForm.name
       } else {
         const newItem = {
           id: Date.now(),
           name: this.currentForm.name,
           popoverVisible: false,
-          expanded: true,
           children: []
         }
         
-        if (this.parentCategory) {
-          if (!this.parentCategory.children) {
-            this.$set(this.parentCategory, 'children', [])
+        if (this.parentCategoryData) {
+          if (!this.parentCategoryData.children) {
+            this.$set(this.parentCategoryData, 'children', [])
           }
-          this.parentCategory.children.push(newItem)
-          this.parentCategory.expanded = true
+          this.parentCategoryData.children.push(newItem)
+          // el-tree handles expansion, but we can ensure it's expanded if we had access to the node. 
+          // Since we are modifying data, el-tree should update. 
+          // If we want to expand the parent node programmatically:
+          this.$nextTick(() => {
+             // Find the node and expand it if needed, or rely on default behavior.
+             // Usually adding a child doesn't auto-expand unless we use store.
+             if (this.$refs.tree) {
+                // If we want to ensure expansion:
+                // this.$refs.tree.store.nodesMap[this.parentCategoryData.id].expanded = true;
+             }
+          })
         } else {
-          this.list.push(newItem)
+          this.treeData.push(newItem)
         }
       }
       this.dialogVisible = false
@@ -277,103 +219,43 @@ export default {
   padding-bottom: 20px;
 }
 
-.tree-node {
-  /* border-bottom: 1px solid #EBEEF5; */
-}
-
-.node-content {
+.custom-tree-node {
+  flex: 1;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+  width: 100%;
 }
 
-.node-content:hover {
-  background-color: #F5F7FA;
+.node-content-wrapper {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.node-content.is-active {
-  background-color: #E6F1FC;
-}
-
-.level-1 {
+/* Custom styles based on levels to mimic original look */
+.level-1 .node-label {
   font-weight: 500;
   color: #303133;
+  font-size: 14px;
 }
 
-.level-2 {
-  padding-left: 45px;
+.level-2 .node-label {
   color: #606266;
+  font-size: 14px;
 }
 
-.level-3 {
-  padding-left: 70px;
+.level-3 .node-label,
+.level-4 .node-label,
+.level-5 .node-label {
   color: #606266;
   font-size: 13px;
 }
 
-.level-4 {
-  padding-left: 95px;
-  color: #909399;
-  font-size: 13px;
-}
-
-.level-5 {
-  padding-left: 120px;
-  color: #909399;
-  font-size: 13px;
-}
-
-.level-6 {
-  padding-left: 145px;
-  color: #909399;
-  font-size: 12px;
-}
-
-.level-7 {
-  padding-left: 170px;
-  color: #909399;
-  font-size: 12px;
-}
-
-.level-8 {
-  padding-left: 195px;
-  color: #909399;
-  font-size: 12px;
-}
-
-.level-9 {
-  padding-left: 220px;
-  color: #909399;
-  font-size: 12px;
-}
-
-.level-10 {
-  padding-left: 245px;
-  color: #909399;
-  font-size: 12px;
-}
-
-.node-left {
-  display: flex;
-  align-items: center;
-  flex: 1;
-}
-
-.expand-icon {
-  margin-right: 8px;
-  font-size: 12px;
-  color: #C0C4CC;
-  width: 12px;
-}
-
-.node-right {
-  display: flex;
-  align-items: center;
-}
-
+/* Action Button Styles */
 .action-btn {
   font-size: 16px;
   color: #409EFF;
@@ -404,5 +286,18 @@ export default {
 .add-root-btn-container {
   padding: 10px 20px;
   border-top: 1px solid #EBEEF5;
+}
+
+/* Customize el-tree styles */
+::v-deep .el-tree-node__content {
+  height: 40px; /* Increase height for better touch/click targets */
+}
+
+::v-deep .el-tree-node__content:hover {
+  background-color: #F5F7FA;
+}
+
+::v-deep .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  background-color: #E6F1FC;
 }
 </style>

@@ -56,6 +56,11 @@ const routes = [
     component: () => import('../views/BusinessCategoryDemo.vue')
   },
   {
+    path: '/business-capability',
+    name: 'BusinessCapabilityManage',
+    component: () => import('../views/BusinessCapabilityManage.vue')
+  },
+  {
     path: '/tree-usage',
     name: 'TreeUsageDemo',
     component: () => import('../views/TreeUsageDemo.vue')
