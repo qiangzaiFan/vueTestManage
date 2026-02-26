@@ -69,6 +69,11 @@ const routes = [
     path: '/score-form',
     name: 'ScoreForm',
     component: () => import('../views/ScoreForm.vue')
+  },
+  {
+    path: '/vegas-strategy',
+    name: 'VegasStrategy',
+    component: () => import('../views/VegasStrategy.vue')
   }
 ]
 
