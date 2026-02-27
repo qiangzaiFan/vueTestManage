@@ -74,6 +74,11 @@ const routes = [
     path: '/vegas-strategy',
     name: 'VegasStrategy',
     component: () => import('../views/VegasStrategy.vue')
+  },
+  {
+    path: '/data-dashboard',
+    name: 'DataDashboard',
+    component: () => import('../views/DataDashboard.vue')
   }
 ]
 

@@ -14,6 +14,7 @@
             <el-menu-item index="/about">关于</el-menu-item>
             <el-menu-item index="/table">表格示例</el-menu-item>
             <el-menu-item index="/form">表单示例</el-menu-item>
+            <el-menu-item index="/data-dashboard">数据看板</el-menu-item>
           </el-menu>
         </div>
       </el-header>

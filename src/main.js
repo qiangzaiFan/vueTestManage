@@ -9,11 +9,13 @@ import 'element-ui/lib/theme-chalk/index.css'
 
 // 引入axios
 import axios from 'axios'
+import PmsCard from './components/PmsCard.vue'
 
 Vue.config.productionTip = false
 
 // 使用Element UI
 Vue.use(ElementUI)
+Vue.component('pms-card', PmsCard)
 
 // 配置axios
 Vue.prototype.$http = axios
