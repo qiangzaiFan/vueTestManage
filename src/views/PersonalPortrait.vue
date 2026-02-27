@@ -157,7 +157,7 @@
           <div slot="header" class="clearfix header-title">
             <span class="text-primary"><i class="el-icon-s-order text-blue"></i> 待办</span>
           </div>
-          <div class="todo-list" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10" :infinite-scroll-immediate="false">
+          <div class="todo-list" @scroll="handleScroll">
             <div v-for="(todo, index) in todoList" :key="index" class="todo-item" @click="handleTodoClick(todo)">
               <div class="todo-icon-wrapper">
                 <i :class="todo.icon" class="todo-icon"></i>
@@ -220,11 +220,13 @@
           <span class="text-primary"><i class="el-icon-s-cooperation text-blue"></i> 问题分级</span>
         </div>
         <div class="donut-chart-wrapper">
-            <div id="chart-issue-class" class="chart-container"></div>
-            <!-- Center Text Overlay -->
-            <div class="chart-center-text clickable" @click="handleIssueClick('total')">
-              <div class="total-count text-primary">142</div>
-              <div class="total-label text-secondary">问题总数</div>
+            <div class="chart-left-section">
+              <div id="chart-issue-class" class="chart-container"></div>
+              <!-- Center Text Overlay -->
+              <div class="chart-center-text clickable" @click="handleIssueClick('total')">
+                <div class="total-count text-primary">142</div>
+                <div class="total-label text-secondary">问题总数</div>
+              </div>
             </div>
             <!-- Legend -->
             <div class="donut-legend">
@@ -318,6 +320,30 @@ export default {
           icon: 'el-icon-document-copy bg-blue-light text-blue'
         },
         {
+          title: '紧急计划审核',
+          publisher: '国网福州公司',
+          sender: '谭婷',
+          startTime: '2024-12-1',
+          receiveTime: '2024-12-1',
+          icon: 'el-icon-document-copy bg-blue-light text-blue'
+        },
+        {
+          title: '紧急计划审核',
+          publisher: '国网福州公司',
+          sender: '谭婷',
+          startTime: '2024-12-1',
+          receiveTime: '2024-12-1',
+          icon: 'el-icon-document-copy bg-blue-light text-blue'
+        },
+        {
+          title: '紧急计划审核',
+          publisher: '国网福州公司',
+          sender: '谭婷',
+          startTime: '2024-12-1',
+          receiveTime: '2024-12-1',
+          icon: 'el-icon-document-copy bg-blue-light text-blue'
+        },
+        {
           title: '任务审核',
           publisher: '国网福州公司',
           sender: '谭婷',
@@ -380,6 +406,12 @@ export default {
         this.$message.error('数据加载失败，请刷新页面重试')
       } finally {
         this.isLoading = false
+      }
+    },
+    handleScroll(e) {
+      const { scrollTop, clientHeight, scrollHeight } = e.target
+      if (scrollHeight - scrollTop - clientHeight <= 2) {
+        this.loadMore()
       }
     },
     loadMore() {
@@ -526,6 +558,17 @@ export default {
           borderColor: '#333',
           textStyle: {
             color: '#fff'
+          },
+          formatter: function (params) {
+            let res = params[0].name + '<br/>';
+            params.forEach(item => {
+              let unit = '个';
+              if (item.seriesName === '监督效率') {
+                unit = '%';
+              }
+              res += item.marker + item.seriesName + ': ' + item.value + unit + '<br/>';
+            });
+            return res;
           }
         },
         legend: {
@@ -621,7 +664,7 @@ export default {
             name: '问题分级',
             type: 'pie',
             radius: ['60%', '80%'],
-            center: ['25%', '50%'], // Move chart to the left
+            center: ['50%', '50%'],
             avoidLabelOverlap: false,
             label: {
               show: false
@@ -680,6 +723,7 @@ export default {
         radar: {
           indicator: indicators,
           radius: '65%',
+          center: ['45%', '60%'],
           splitNumber: 4,
           axisName: {
             color: '#666'
@@ -983,19 +1027,25 @@ export default {
 /* Charts */
 .chart-container {
   width: 100%;
-  height: 250px;
+  height: 100%;
 }
 .donut-chart-wrapper {
   display: flex;
   align-items: center;
   position: relative; /* For absolute positioning of center text */
-  justify-content: center; /* Center content horizontally */
+  justify-content: flex-start; /* Left align */
+  height: 250px;
+}
+.chart-left-section {
+  position: relative;
+  width: 50%;
+  height: 100%;
 }
 /* Center Text Overlay */
 .chart-center-text {
   position: absolute;
   top: 50%;
-  left: 25%; /* Adjust based on chart position, typically center of left half */
+  left: 50%; /* Center in left section */
   transform: translate(-50%, -50%);
   text-align: center;
   cursor: pointer;
@@ -1019,12 +1069,12 @@ export default {
 
 /* Legend Styles */
 .donut-legend {
-  margin-left: 20px;
+  margin-left: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex: 1; /* Take remaining space */
-  max-width: 200px; /* Limit width */
+  width: 50%; /* Right half */
+  padding-left: 20px; /* Gap */
 }
 .legend-item {
   display: flex;
@@ -1079,7 +1129,7 @@ export default {
   flex-direction: column;
 }
 .todo-list {
-  flex: 1;
+  height: 350px;
   overflow-y: auto;
   padding: 0 5px;
 }
